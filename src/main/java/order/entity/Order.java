@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.time.LocalDate;
+import java.util.Date;
 import java.util.Map;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -14,7 +14,7 @@ public class Order {
     private String orderId;
     private String uId;
     private Map<String, ProductInfo> productInfos;
-    private LocalDate date;
+    private Date date;
 
     public String getOrderId() {
         return orderId;
@@ -40,11 +40,11 @@ public class Order {
         this.productInfos = productInfos;
     }
 
-    public LocalDate getDate() {
+    public Date getDate() {
         return date;
     }
 
-    public void setDate(LocalDate date) {
+    public void setDate(Date date) {
         this.date = date;
     }
 }

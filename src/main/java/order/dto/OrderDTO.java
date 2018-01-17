@@ -1,12 +1,12 @@
 package order.dto;
 
-import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 public class OrderDTO {
     private String orderId;
     private String uId;
-    private LocalDate date;
+    private Date date;
     private List <ProductDTO> products;
 
     public String getOrderId() {
@@ -33,11 +33,11 @@ public class OrderDTO {
         this.productInfos = productInfos;
     }*/
 
-    public LocalDate getDate() {
+    public Date getDate() {
         return date;
     }
 
-    public void setDate(LocalDate date) {
+    public void setDate(Date date) {
         this.date = date;
     }
 

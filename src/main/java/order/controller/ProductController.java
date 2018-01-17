@@ -22,7 +22,7 @@ public class ProductController {
     public ResponseEntity<?> add(@RequestBody Product product){
         productServices.add(product);
         if (product != null)
-            return new ResponseEntity<>("Inserted " + product.getProductName(), HttpStatus.OK);
+            return new ResponseEntity<>("Inserted " + product.getpName(), HttpStatus.OK);
         else
             return new ResponseEntity<>("There was an error", HttpStatus.INTERNAL_SERVER_ERROR);
     }

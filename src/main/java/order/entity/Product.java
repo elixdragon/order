@@ -14,12 +14,12 @@ public class Product {
 
     @Id
     private String productId;
-    private String productName;
-    private Double productPrice;
-    private String productBrand;
-    private String productCategory;
-    private URL productImage;
-    private Integer productUnits;
+    private String pName;
+    private Double pPrice;
+    private String pBrand;
+    private String pCategory;
+    private URL pimage;
+    private Integer pUnit;
 
     public static String getCollectionName() {
         return COLLECTION_NAME;
@@ -33,51 +33,51 @@ public class Product {
         this.productId = productId;
     }
 
-    public String getProductName() {
-        return productName;
+    public String getpName() {
+        return pName;
     }
 
-    public void setProductName(String productName) {
-        this.productName = productName;
+    public void setpName(String pName) {
+        this.pName = pName;
     }
 
-    public Double getProductPrice() {
-        return productPrice;
+    public Double getpPrice() {
+        return pPrice;
     }
 
-    public void setProductPrice(Double productPrice) {
-        this.productPrice = productPrice;
+    public void setpPrice(Double pPrice) {
+        this.pPrice = pPrice;
     }
 
-    public String getProductBrand() {
-        return productBrand;
+    public String getpBrand() {
+        return pBrand;
     }
 
-    public void setProductBrand(String productBrand) {
-        this.productBrand = productBrand;
+    public void setpBrand(String pBrand) {
+        this.pBrand = pBrand;
     }
 
-    public String getProductCategory() {
-        return productCategory;
+    public String getpCategory() {
+        return pCategory;
     }
 
-    public void setProductCategory(String productCategory) {
-        this.productCategory = productCategory;
+    public void setpCategory(String pCategory) {
+        this.pCategory = pCategory;
     }
 
-    public URL getProductImage() {
-        return productImage;
+    public URL getPimage() {
+        return pimage;
     }
 
-    public void setProductImage(URL productImage) {
-        this.productImage = productImage;
+    public void setPimage(URL pimage) {
+        this.pimage = pimage;
     }
 
-    public Integer getProductUnits() {
-        return productUnits;
+    public Integer getpUnit() {
+        return pUnit;
     }
 
-    public void setProductUnits(Integer productUnits) {
-        this.productUnits = productUnits;
+    public void setpUnit(Integer pUnit) {
+        this.pUnit = pUnit;
     }
 }
