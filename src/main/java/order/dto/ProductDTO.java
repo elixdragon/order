@@ -1,6 +1,7 @@
 package order.dto;
 
 import java.net.URL;
+import java.util.Date;
 
 public class ProductDTO {
 
@@ -11,6 +12,15 @@ public class ProductDTO {
     private String pCategory;
     private URL pimage;
     private Integer pUnit;
+    private Date dateCreated;
+
+    public Date getDateCreated() {
+        return dateCreated;
+    }
+
+    public void setDateCreated(Date dateCreated) {
+        this.dateCreated = dateCreated;
+    }
 
     public String getProductId() {
         return productId;

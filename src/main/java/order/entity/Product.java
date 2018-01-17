@@ -5,6 +5,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.net.URL;
+import java.util.Date;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Document
@@ -20,6 +21,15 @@ public class Product {
     private String pCategory;
     private URL pimage;
     private Integer pUnit;
+    private Date dateCreated;
+
+    public Date getDateCreated() {
+        return dateCreated;
+    }
+
+    public void setDateCreated(Date dateCreated) {
+        this.dateCreated = dateCreated;
+    }
 
     public static String getCollectionName() {
         return COLLECTION_NAME;

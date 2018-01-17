@@ -10,16 +10,17 @@ import java.util.List;
 import java.util.Map;
 
 public class ServiceUtils {
-    public final static String PRODUCT_API_URI = "http://localhost:8080/p/getList";
+    public final static String PRODUCT_API_URI = "http://localhost:8082/search/getList";
+    public final static String CATALOGUE_API_URI = "http://localhost:8081/catalogue/update";
+
     public static OrderDTO makeOrderDTOfromOrder(Order order, List<ProductDTO> products){
         OrderDTO orderDTO = new OrderDTO();
         BeanUtils.copyProperties(order, orderDTO);
-//        List<ProductDTO> productDTOList = new ArrayList<>();
         orderDTO.setProducts(products);
         Map<String, ProductInfo> productInfoMap = order.getProductInfos();
         for (ProductDTO product : products){
-            product.setProductPrice(productInfoMap.get(product.getProductId()).getPrice());
-            product.setProductUnits(productInfoMap.get(product.getProductId()).getUnits());
+            product.setpPrice(productInfoMap.get(product.getProductId()).getPrice());
+            product.setpUnit(productInfoMap.get(product.getProductId()).getUnits());
         }
         return orderDTO;
     }
