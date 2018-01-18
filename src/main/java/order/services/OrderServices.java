@@ -8,7 +8,7 @@ import java.util.List;
 
 @Service
 public interface OrderServices {
-    void add(Order order);
+    OrderDTO add(Order order);
     void deleteByOrderId(String orderId);
     OrderDTO findOrderDTOById(String orderId);
     List<OrderDTO> findJoinedRecent(int page, int size, String uid);

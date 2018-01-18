@@ -10,11 +10,9 @@ import order.repository.OrderRepository;
 import order.services.OrderServices;
 import order.services.ServiceUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -29,7 +27,7 @@ public class OrderServicesImpl implements OrderServices{
 
 
     @Override
-    public void add(Order order) {
+    public OrderDTO add(Order order) {
         if (order.getDate() == null)
             order.setDate(Date.from(Instant.now()));
         orderRepository.save(order);
@@ -38,7 +36,12 @@ public class OrderServicesImpl implements OrderServices{
         order.getProductInfos().forEach((pid, pinfo) ->{
             requestBody.put(pid, -pinfo.getUnits());
         });
+
         restClient.post(ServiceUtils.CATALOGUE_API_URI, requestBody);
+        Order insertedOrder = orderRepository.findFirstByUIdOrderByDateDesc(order.getuId());
+
+
+        return getOrderDTOList(Arrays.asList(insertedOrder)).get(0);
     }
 
     @Override

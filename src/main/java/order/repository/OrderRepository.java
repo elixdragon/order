@@ -15,4 +15,5 @@ public interface OrderRepository extends MongoRepository<Order, String> {
     Order findByOrderId(String orderId);
     Order deleteByOrderId(String orderId);
     Page<Order> findByUId(String uid, Pageable pageable);
+    Order findFirstByUIdOrderByDateDesc(String uid);
 }

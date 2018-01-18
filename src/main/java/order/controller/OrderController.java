@@ -1,5 +1,6 @@
 package order.controller;
 
+import com.mongodb.util.JSON;
 import order.dto.OrderDTO;
 import order.entity.Order;
 import order.services.OrderServices;
@@ -10,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RequestMapping("/o")
+@RequestMapping("/order")
 @RestController
 public class OrderController {
 
@@ -19,9 +20,8 @@ public class OrderController {
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public ResponseEntity<?> add(@RequestBody Order order){
-        orderServices.add(order);
-
-        return new ResponseEntity<>("Everything went well", HttpStatus.OK);
+        OrderDTO orderDTO = orderServices.add(order);
+        return new ResponseEntity<>(orderDTO, HttpStatus.OK);
     }
 
     @RequestMapping("/getOne/{orderId}")
@@ -31,7 +31,7 @@ public class OrderController {
         return new ResponseEntity<>(orderDTO, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/getRecent/{uid}")
+    @RequestMapping(value = "/getHistory/{uid}")
     public ResponseEntity<List<OrderDTO>> getJoinedRecent(@RequestParam(value = "p", required = false, defaultValue = "0") Integer page,
                                                           @RequestParam(value = "s", required = false, defaultValue = "10") Integer size,
                                                           @PathVariable("uid") String uid){
