@@ -20,6 +20,7 @@ public class OrderController {
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public ResponseEntity<?> add(@RequestBody Order order){
         orderServices.add(order);
+
         return new ResponseEntity<>("Everything went well", HttpStatus.OK);
     }
 
@@ -30,9 +31,13 @@ public class OrderController {
         return new ResponseEntity<>(orderDTO, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/getRecent")
-    public ResponseEntity<List<OrderDTO>> getJoinedRecent(@RequestParam("p") Integer page,@RequestParam("s") Integer size){
-        return new ResponseEntity<>(orderServices.findJoinedRecent(page, size), HttpStatus.OK);
+    @RequestMapping(value = "/getRecent/{uid}")
+    public ResponseEntity<List<OrderDTO>> getJoinedRecent(@RequestParam(value = "p", required = false, defaultValue = "0") Integer page,
+                                                          @RequestParam(value = "s", required = false, defaultValue = "10") Integer size,
+                                                          @PathVariable("uid") String uid){
+        if(size > 20)
+            size = 20;
+        return new ResponseEntity<>(orderServices.findJoinedRecent(page, size, uid), HttpStatus.OK);
     }
 
 

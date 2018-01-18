@@ -8,8 +8,10 @@ import java.util.Date;
 import java.util.Map;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-@Document
+@Document(collection = Order.COLLECTION_NAME)
 public class Order {
+    public static final String COLLECTION_NAME = "orders";
+
     @Id
     private String orderId;
     private String uId;

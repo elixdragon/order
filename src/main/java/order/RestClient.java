@@ -1,37 +1,46 @@
 package order;
 
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
-public class RestClient<T> {
+import java.io.IOException;
+import java.util.Map;
 
-    private String server = "http://localhost:8080";
+public class RestClient<S> {
+
     private RestTemplate rest;
-    private HttpHeaders headers;
-    private HttpStatus status;
+    private ObjectMapper objectMapper;
 
     public RestClient() {
         this.rest = new RestTemplate();
-        this.headers = new HttpHeaders();
-        headers.add("Content-Type", "application/json");
-        headers.add("Accept", "*/*");
+        objectMapper = new ObjectMapper();
     }
 
-    public String get(String uri) {
-        HttpEntity<String> requestEntity = new HttpEntity<String>("", headers);
-        ResponseEntity<String> responseEntity = rest.exchange(server + uri, HttpMethod.GET, requestEntity, String.class);
-        this.setStatus(responseEntity.getStatusCode());
-        return responseEntity.getBody();
+    public String get(String uri, Map<String, String> uriVariables) {
+        return rest.getForEntity(uri, String.class, uriVariables).getBody();
     }
 
-    public String post(String uri, T req) {
+    public String post(String uri, S req) {
         ResponseEntity<String> responseEntity = rest.postForEntity(uri, req, String.class);
         return responseEntity.getBody();
     }
+
+   /* private R mapJsonToObject(String json){
+        R response = null;
+        try {
+            response = objectMapper.readValue(json, new TypeReference<R>() {});
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        System.out.println(response);
+        return response;
+    }*/
+
+
+
+
 
     /*public void put(String uri, String json) {
         HttpEntity<String> requestEntity = new HttpEntity<String>(json, headers);
@@ -44,12 +53,4 @@ public class RestClient<T> {
         ResponseEntity<String> responseEntity = rest.exchange(server + uri, HttpMethod.DELETE, requestEntity, null);
         this.setStatus(responseEntity.getStatusCode());
     }*/
-
-    public HttpStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(HttpStatus status) {
-        this.status = status;
-    }
 }
