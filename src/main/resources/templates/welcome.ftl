@@ -20,7 +20,7 @@
 <table align="center" border="0" cellpadding="0" cellspacing="0" width="600" style="border-collapse: collapse;">
 <tr>
     <td align="center" bgcolor="#ffffff" style="padding: 40px 0 30px 0;">
-        <img src="cid:logo.png" alt="https://memorynotfound.com" style="display: block;" />
+        <img src='https://i.imgur.com/TPxlhfU.png' width="100" height="100" alt="InternCartlogo" style="display: block;" />
     </td>
 </tr>
 <tr>
@@ -28,6 +28,7 @@
         <p>Dear ${user},</p>
         <p>We would like to inform you that your order has been placed successfully.
             <b>Product Details</b>
+        <#assign counter = 0>
         <#list productlist as x>
         <br/>
         <hr>
@@ -37,7 +38,10 @@
         Product  :${x.getpName()}<br/>
         Price  :${x.getpPrice()}<br/>
         Units Purchase: ${x.getpUnit()}<br/></p>
+            <#assign counter = counter + x.getpPrice()>
         </#list>
+        <br>
+        <p align="right" hspace="20"><b>Total Price : ${counter}</b></p>
     </td>
 </tr>
 <tr>

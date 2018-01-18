@@ -32,10 +32,10 @@ public class MailController {
     String home() {
         try {
             OrderDTO order = new OrderDTO();
-
             String myUrl = "http://pipsum.com/435x310.jpg";
             URL url = new URL(myUrl);
             ProductDTO product = new ProductDTO();
+            ProductDTO product1 = new ProductDTO();
             product.setProductId("ubfiuwbfiew");
             product.setpBrand("nike");
             product.setpCategory("shoes");
@@ -43,11 +43,13 @@ public class MailController {
             product.setpName("nike shoe");
             product.setpUnit(3);
             product.setpPrice(34.00);
+            product1 = product;
             List<ProductDTO> products = new ArrayList<ProductDTO>();
             products.add(product);
+            products.add(product1);
             order.setDate(new Timestamp(System.currentTimeMillis()));
             order.setOrderId("5a5df49b7695909c9f376ca0");
-            order.setuId("2064e9ee-f04f-48c6-b352-85856906716a");
+            order.setuId("ed94d79a-d28f-4dbf-8260-b1ae8c5b7166");
             order.setProducts(products);
             mailService.sendEmail(order);
             return "Email Sent!";
