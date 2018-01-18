@@ -74,7 +74,7 @@ public class OrderServicesImpl implements OrderServices{
         orders.forEach(order ->{
             List <String> productIds = new ArrayList<>(order.getProductInfos().keySet());
             List <ProductDTO> products = null;
-            String responseString = restClient.post(ServiceUtils.PRODUCT_API_URI, productIds);
+            String responseString = restClient.post(ServiceUtils.SEARCH_API_URI, productIds);
             try {
                 products = mapper.readValue(responseString, new TypeReference<List<ProductDTO>>(){});
             } catch (IOException e) {

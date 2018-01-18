@@ -19,19 +19,19 @@
 <body style="margin: 0; padding: 0;">
 <table align="center" border="0" cellpadding="0" cellspacing="0" width="600" style="border-collapse: collapse;">
 <tr>
-    <td align="center" bgcolor="#78ab46" style="padding: 40px 0 30px 0;">
+    <td align="center" bgcolor="#ffffff" style="padding: 40px 0 30px 0;">
         <img src="cid:logo.png" alt="https://memorynotfound.com" style="display: block;" />
     </td>
 </tr>
 <tr>
-    <td bgcolor="#eaeaea" style="padding: 40px 30px 40px 30px;">
+    <td bgcolor="#ffffff" style="padding: 40px 30px 40px 30px;">
         <p>Dear ${user},</p>
         <p>We would like to inform you that your order has been placed successfully.
             <b>Product Details</b>
         <#list productlist as x>
         <br/>
         <hr>
-            <p><img src="${x.getPimage()}" alt="productItem" width="42" height="42" align="right" hspace="20">
+            <p><img src="${x.getPimage()}" alt="productItem" width="80" height="80" align="right" hspace="20">
         Brand Name: ${x.getpBrand()}<br>
         Catagory  :${x.getpCategory()}<br/>
         Product  :${x.getpName()}<br/>

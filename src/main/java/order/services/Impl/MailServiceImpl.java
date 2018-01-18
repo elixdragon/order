@@ -2,6 +2,7 @@ package order.services.Impl;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;
+import order.RestClient;
 import order.dto.OrderDTO;
 import order.services.MailService;
 import org.json.JSONObject;
@@ -39,7 +40,7 @@ public class MailServiceImpl implements MailService {
 
             MimeMessageHelper helper = new MimeMessageHelper(message);
 
-            Map<String, Object> model = new HashMap();
+            Map<String, Object> model = new HashMap<>();
 
             JSONObject user = new JSONObject(getuserdetails(orderDTO.getuId()));
             model.put("user",user.getString("firstName"));
@@ -60,7 +61,7 @@ public class MailServiceImpl implements MailService {
         }
         catch (Exception e)
         {
-            System.out.println(e);
+            e.printStackTrace();
         }
 
     }
@@ -68,20 +69,23 @@ public class MailServiceImpl implements MailService {
     private String getuserdetails(String userid) throws Exception
     {
         String url = "http://"+env.getProperty("auth.host")+":"+env.getProperty("auth.port")+"/"+env.getProperty("auth.usercontextpath")+"/getOne?uid="+userid;
-
-        URL obj = new URL(url);
-        HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-        con.setRequestProperty("User-Agent", USER_AGENT);
-        BufferedReader in = new BufferedReader(
-                new InputStreamReader(con.getInputStream()));
-        String inputLine;
-        StringBuffer response = new StringBuffer();
-
-        while ((inputLine = in.readLine()) != null) {
-            response.append(inputLine);
-        }
-        in.close();
-        return  response.toString();
+        RestClient<String> restClient = new RestClient<>();
+        return restClient.get(url, new HashMap<>());
+//
+//
+//        URL obj = new URL(url);
+//        HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+//        con.setRequestProperty("User-Agent", USER_AGENT);
+//        BufferedReader in = new BufferedReader(
+//                new InputStreamReader(con.getInputStream()));
+//        String inputLine;
+//        StringBuffer response = new StringBuffer();
+//
+//        while ((inputLine = in.readLine()) != null) {
+//            response.append(inputLine);
+//        }
+//        in.close();
+//        return  response.toString();
     }
 
 }

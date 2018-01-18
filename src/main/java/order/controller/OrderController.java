@@ -3,6 +3,7 @@ package order.controller;
 import com.mongodb.util.JSON;
 import order.dto.OrderDTO;
 import order.entity.Order;
+import order.services.MailService;
 import order.services.OrderServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,9 +19,13 @@ public class OrderController {
     @Autowired
     OrderServices orderServices;
 
+    @Autowired
+    MailService mailService;
+
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public ResponseEntity<?> add(@RequestBody Order order){
         OrderDTO orderDTO = orderServices.add(order);
+        mailService.sendEmail(orderDTO);
         return new ResponseEntity<>(orderDTO, HttpStatus.OK);
     }
 

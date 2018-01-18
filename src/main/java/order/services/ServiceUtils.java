@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.Map;
 
 public class ServiceUtils {
-    public final static String PRODUCT_API_URI = "http://localhost:8082/search/getList";
-    public final static String CATALOGUE_API_URI = "http://localhost:8081/catalogue/update";
+    public final static String SEARCH_API_URI = "http://10.177.7.117:8080/search/getList";
+    public final static String CATALOGUE_API_URI = "http://10.177.7.117:8081/catalogue/update";
 
     public static OrderDTO makeOrderDTOfromOrder(Order order, List<ProductDTO> products){
         OrderDTO orderDTO = new OrderDTO();
