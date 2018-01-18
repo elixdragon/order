@@ -14,14 +14,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import org.springframework.mail.javamail.JavaMailSender;
 import javax.mail.internet.MimeMessage;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-
-import static org.springframework.http.HttpHeaders.USER_AGENT;
 
 @Service
 public class MailServiceImpl implements MailService {
@@ -48,7 +42,7 @@ public class MailServiceImpl implements MailService {
             model.put("user",user.getString("firstName"));
             model.put("productlist", orderDTO.getProducts());
             model.put("signature", "InTeRnCaRt");
-            model.put("location","INDIA");
+            model.put("location","COVIAM");
 
             freemarkerConfig.setClassForTemplateLoading(this.getClass(), "/templates");
 
@@ -73,21 +67,6 @@ public class MailServiceImpl implements MailService {
         String url = "http://"+env.getProperty("auth.host")+":"+env.getProperty("auth.port")+"/"+env.getProperty("auth.usercontextpath")+"/getOne?uid="+userid;
         RestClient<String> restClient = new RestClient<>();
         return restClient.get(url, new HashMap<>());
-//
-//
-//        URL obj = new URL(url);
-//        HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-//        con.setRequestProperty("User-Agent", USER_AGENT);
-//        BufferedReader in = new BufferedReader(
-//                new InputStreamReader(con.getInputStream()));
-//        String inputLine;
-//        StringBuffer response = new StringBuffer();
-//
-//        while ((inputLine = in.readLine()) != null) {
-//            response.append(inputLine);
-//        }
-//        in.close();
-//        return  response.toString();
     }
 
 }
