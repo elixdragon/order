@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -69,22 +71,17 @@ public class OrderServicesImpl implements OrderServices{
 
     private List<OrderDTO> getOrderDTOList(List <Order> orders){
         List<OrderDTO> orderDTOList = new ArrayList<>();
-        RestClient <List<String>> restClient = new RestClient<>();
-        ObjectMapper mapper = new ObjectMapper();
+
         orders.forEach(order ->{
             List <String> productIds = new ArrayList<>(order.getProductInfos().keySet());
-            List <ProductDTO> products = null;
-            String responseString = restClient.post(ServiceUtils.SEARCH_API_URI, productIds);
-            try {
-                products = mapper.readValue(responseString, new TypeReference<List<ProductDTO>>(){});
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            List <ProductDTO> products = ServiceUtils.getProductListFromPIds(productIds);
             orderDTOList.add(ServiceUtils.makeOrderDTOfromOrder(order, products));
         });
 
         return orderDTOList;
     }
+
+
 
 
     //Testing Function
@@ -95,4 +92,6 @@ public class OrderServicesImpl implements OrderServices{
         orders.forEach(retList::add);
         return retList;
     }
+
+
 }

@@ -25,7 +25,7 @@ public class OrderController {
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public ResponseEntity<?> add(@RequestBody Order order){
         OrderDTO orderDTO = orderServices.add(order);
-        mailService.sendEmail(orderDTO);
+//        mailService.sendEmail(orderDTO);
         return new ResponseEntity<>(orderDTO, HttpStatus.OK);
     }
 
