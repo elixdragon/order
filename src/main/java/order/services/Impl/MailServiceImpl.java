@@ -56,7 +56,7 @@ public class MailServiceImpl implements MailService {
             helper.setText(text, true);
             helper.setSubject("OrderDetails");
 
-            //sender.send(message);
+            sender.send(message);
         }
         catch (Exception e)
         {
