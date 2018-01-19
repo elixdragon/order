@@ -38,7 +38,7 @@ public class MailServiceImpl implements MailService {
 
             Map<String, Object> model = new HashMap<>();
 
-            JSONObject user = new JSONObject(getuserdetails(orderDTO.getuId()));
+            JSONObject user = new JSONObject(getUserDetails(orderDTO.getuId()));
             model.put("user",user.getString("firstName"));
             model.put("productlist", orderDTO.getProducts());
             model.put("signature", "InTeRnCaRt");
@@ -62,7 +62,7 @@ public class MailServiceImpl implements MailService {
 
     }
 
-    private String getuserdetails(String userid) throws Exception
+    private String getUserDetails(String userid) throws Exception
     {
         String url = "http://"+env.getProperty("auth.host")+":"+env.getProperty("auth.port")+"/"+env.getProperty("auth.usercontextpath")+"/getOne?uid="+userid;
         RestClient<String> restClient = new RestClient<>();

@@ -1,7 +1,5 @@
 package order.services.Impl;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import order.RestClient;
 import order.dto.OrderDTO;
 import order.dto.ProductDTO;
@@ -13,13 +11,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.time.Instant;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
+
+import static order.services.ServiceUtils.makeOrderDTOsFromOrderList;
 
 @Service
 public class OrderServicesImpl implements OrderServices{
@@ -28,22 +26,32 @@ public class OrderServicesImpl implements OrderServices{
     OrderRepository orderRepository;
 
 
+    /**
+     * ADD ORDER AFTER VALIDATION
+     * */
     @Override
-    public OrderDTO add(Order order) {
+    public OrderDTO add(Order order) throws Exception {
         if (order.getDate() == null)
             order.setDate(Date.from(Instant.now()));
-        orderRepository.save(order);
-        RestClient<Map<String, Integer>> restClient = new RestClient<>();
-        Map<String, Integer> requestBody = new HashMap<>();
-        order.getProductInfos().forEach((pid, pinfo) ->{
-            requestBody.put(pid, -pinfo.getUnits());
+
+        Map<String, Integer> unitMap = new HashMap<>();
+        order.getProductInfos().forEach((pid, pinfo) -> {
+            unitMap.put(pid, -pinfo.getUnits());
         });
 
-        restClient.post(ServiceUtils.CATALOGUE_API_URI, requestBody);
-        Order insertedOrder = orderRepository.findFirstByUIdOrderByDateDesc(order.getuId());
+        List<ProductDTO> productDTOList = ServiceUtils.getProductListFromPIds(new ArrayList<>(order.getProductInfos().keySet()));
+        if (validateOrder(unitMap, productDTOList)) {
+            orderRepository.save(order);//save order
 
+            RestClient<Map<String, Integer>> restClient = new RestClient<>();
 
-        return getOrderDTOList(Arrays.asList(insertedOrder)).get(0);
+            restClient.post(ServiceUtils.CATALOGUE_API_URI, unitMap);//reduce item quantity from catalogue
+            Order insertedOrder = orderRepository.findFirstByUIdOrderByDateDesc(order.getuId());//to get the order ID for sending email
+
+            return ServiceUtils.makeOrderDTOfromOrder(insertedOrder, productDTOList);
+        }else{
+            throw new Exception("Product Out of stock");
+        }
     }
 
     @Override
@@ -51,13 +59,26 @@ public class OrderServicesImpl implements OrderServices{
         orderRepository.deleteByOrderId(orderId);
     }
 
+    /**
+     * IF ORDER CONTAINS MORE UNITS THAN STOCK THEN RETURN FALSE ELSE RETURN TRUE
+     * */
+    public Boolean validateOrder(Map<String, Integer> unitMap, List<ProductDTO> products){
+        AtomicReference<Boolean> allGood = new AtomicReference<>(true);
+        products.forEach(productDTO -> {
+            if (Math.abs(unitMap.get(productDTO.getProductId())) > productDTO.getpUnit()){
+                allGood.set(false);
+            }
+        });
+        return allGood.get();
+    }
+
     @Override
     public OrderDTO findOrderDTOById(String orderId) {
         Order order = orderRepository.findByOrderId(orderId);
-        List <Order> list = new ArrayList<>();
-        list.add(order);
-        return getOrderDTOList(list).get(0);
+        return makeOrderDTOsFromOrderList(Arrays.asList(order)).get(0);
     }
+
+
 
 
     @Override
@@ -66,20 +87,10 @@ public class OrderServicesImpl implements OrderServices{
         Page<Order> orders = orderRepository.findByUId(uid, pageRequest);
         List <Order> orderList = new ArrayList<>();
         orders.forEach(orderList::add);
-        return getOrderDTOList(orderList);
+        return makeOrderDTOsFromOrderList(orderList);
     }
 
-    private List<OrderDTO> getOrderDTOList(List <Order> orders){
-        List<OrderDTO> orderDTOList = new ArrayList<>();
 
-        orders.forEach(order ->{
-            List <String> productIds = new ArrayList<>(order.getProductInfos().keySet());
-            List <ProductDTO> products = ServiceUtils.getProductListFromPIds(productIds);
-            orderDTOList.add(ServiceUtils.makeOrderDTOfromOrder(order, products));
-        });
-
-        return orderDTOList;
-    }
 
 
 

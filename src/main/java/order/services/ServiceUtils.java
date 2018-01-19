@@ -10,13 +10,13 @@ import order.entity.ProductInfo;
 import org.springframework.beans.BeanUtils;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class ServiceUtils {
     public final static String SEARCH_API_URI = "http://10.177.7.117:8080/search/getList";
     public final static String CATALOGUE_API_URI = "http://10.177.7.117:8081/catalogue/update";
-
 
 
     static RestClient<List<String>> restClientString = new RestClient<>();
@@ -43,5 +43,17 @@ public class ServiceUtils {
             e.printStackTrace();
         }
         return products;
+    }
+
+    public static List<OrderDTO> makeOrderDTOsFromOrderList(List <Order> orders){
+        List<OrderDTO> orderDTOList = new ArrayList<>();
+
+        orders.forEach(order ->{
+            List <String> productIds = new ArrayList<>(order.getProductInfos().keySet());
+            List <ProductDTO> products = ServiceUtils.getProductListFromPIds(productIds);
+            orderDTOList.add(ServiceUtils.makeOrderDTOfromOrder(order, products));
+        });
+
+        return orderDTOList;
     }
 }
