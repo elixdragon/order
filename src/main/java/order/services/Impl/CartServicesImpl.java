@@ -3,22 +3,26 @@ package order.services.Impl;
 import order.Values;
 import order.services.CartServices;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestTemplate;
 
 @Service
 public class CartServicesImpl implements CartServices {
 
     @Autowired
-            @Qualifier("secondaryMongoTemplate")
-    MongoTemplate cartMongoTemplate;
+    RestTemplate restTemplate;
 
     @Override
+    @Async
     public void emptyCart(String uid) {
-        System.out.println(cartMongoTemplate.count(new Query(), Values.COLLECTION_CART));
-        cartMongoTemplate.remove(new Query().addCriteria(Criteria.where(Values.CART_USERID_FIELD_NAME).is(uid)), Values.COLLECTION_CART);
+        System.out.println("CALLING CART API");
+        try{
+            restTemplate.delete(Values.CART_API_BASE + Values.CART_API_DELETE_ENDPOINT + "/" + uid);
+        }catch(RestClientException e) {
+            System.out.println("CALL TO CART API FAILED");
+        }
     }
+
 }

@@ -1,23 +1,26 @@
 package order.services.Impl;
 
-import order.RestClient;
+import order.Exceptions.CustomException;
+import order.Values;
 import order.dto.OrderDTO;
 import order.dto.ProductDTO;
 import order.entity.Order;
 import order.repository.OrderRepository;
+import order.services.CartServices;
 import order.services.OrderServices;
+import order.services.ProductServices;
 import order.services.ServiceUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static order.services.ServiceUtils.makeOrderDTOsFromOrderList;
 
 @Service
 public class OrderServicesImpl implements OrderServices{
@@ -25,12 +28,24 @@ public class OrderServicesImpl implements OrderServices{
     @Autowired
     OrderRepository orderRepository;
 
+    @Autowired
+    private RestTemplate restTemplate;
+
+    @Autowired
+    CartServices cartServices;
+
+    @Autowired
+    ProductServices productServices;
+
+    @Autowired
+    ServiceUtils serviceUtils;
+
 
     /**
      * ADD ORDER AFTER VALIDATION
      * */
     @Override
-    public OrderDTO add(Order order) throws Exception {
+    public OrderDTO add(Order order) throws CustomException {
         if (order.getDate() == null)
             order.setDate(Date.from(Instant.now()));
 
@@ -39,18 +54,34 @@ public class OrderServicesImpl implements OrderServices{
             unitMap.put(pid, -pinfo.getUnits());
         });
 
-        List<ProductDTO> productDTOList = ServiceUtils.getProductListFromPIds(new ArrayList<>(order.getProductInfos().keySet()));
-        if (validateOrder(unitMap, productDTOList)) {
-            orderRepository.save(order);//save order
+        try {
+            //the following call can throw RestClientException in case of api call timeout
+            List<ProductDTO> productDTOList = productServices.getProductDTOListFromAPI(new ArrayList<>(order.getProductInfos().keySet()));
+            System.out.println("product dto list : " + productDTOList);
+            if (validateOrder(unitMap, productDTOList)) {
 
-            RestClient<Map<String, Integer>> restClient = new RestClient<>();
+                //save order
+                orderRepository.save(order);
 
-            restClient.post(ServiceUtils.CATALOGUE_API_URI, unitMap);//reduce item quantity from catalogue
-            Order insertedOrder = orderRepository.findFirstByUIdOrderByDateDesc(order.getuId());//to get the order ID for sending email
+                //save cache
+                productServices.saveToCacheFromDTOs(productDTOList);
 
-            return ServiceUtils.makeOrderDTOfromOrder(insertedOrder, productDTOList);
-        }else{
-            throw new Exception("Product Out of stock");
+                //reduce quantity from catalogue
+                restTemplate.put(Values.CATALOGUE_API_BASE + Values.CATALOGUE_API_UPDATE, unitMap);
+
+                //get latest order for sending as response / for email aspect.
+                Order insertedOrder = orderRepository.findFirstByUIdOrderByDateDesc(order.getuId());//to get the order ID for sending email
+
+                //remove from cart : call cart api from here (async)
+                cartServices.emptyCart(order.getuId());
+
+                //return latest orderDTO
+                return serviceUtils.makeOrderDTO(insertedOrder, productDTOList);
+            } else {
+                throw new CustomException("Product Out of stock");
+            }
+        }catch(RuntimeException r){
+            throw new CustomException("Cant connect to catalogue API");
         }
     }
 
@@ -75,11 +106,8 @@ public class OrderServicesImpl implements OrderServices{
     @Override
     public OrderDTO findOrderDTOById(String orderId) {
         Order order = orderRepository.findByOrderId(orderId);
-        return makeOrderDTOsFromOrderList(Arrays.asList(order)).get(0);
+        return serviceUtils.makeOrderDTOs(Arrays.asList(order)).get(0);
     }
-
-
-
 
     @Override
     public List<OrderDTO> findJoinedRecent(int page, int size, String uid) {
@@ -87,12 +115,8 @@ public class OrderServicesImpl implements OrderServices{
         Page<Order> orders = orderRepository.findByUId(uid, pageRequest);
         List <Order> orderList = new ArrayList<>();
         orders.forEach(orderList::add);
-        return makeOrderDTOsFromOrderList(orderList);
+        return serviceUtils.makeOrderDTOs(orderList);
     }
-
-
-
-
 
 
     //Testing Function

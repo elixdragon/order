@@ -10,15 +10,19 @@ import org.springframework.stereotype.Component;
 
 @Aspect
 @Component
-public class EmailingAspect{
+public class EmailingAspect {
 
     @Autowired
     MailService mailService;
 
     @AfterReturning(returning = "orderDTOResponseEntity", pointcut = "execution(* order.controller.OrderController.add(..))")
-    public void validateOrderAndSendEmail(ResponseEntity<OrderDTO> orderDTOResponseEntity) {
-            System.out.println("Sending Email");
-            mailService.sendEmail(orderDTOResponseEntity.getBody());
+    public void validateOrderAndSendEmail(ResponseEntity<?> orderDTOResponseEntity) {
+        System.out.println("Aspect Activated");
+//        if (orderDTOResponseEntity.getBody().getClass() != OrderDTO.class) {
+//            return;
+//        }
+        System.out.println("Sending Email...");
+        mailService.sendEmail((OrderDTO) orderDTOResponseEntity.getBody());
     }
 
 }

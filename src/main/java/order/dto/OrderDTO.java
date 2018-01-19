@@ -25,13 +25,6 @@ public class OrderDTO {
         this.uId = uId;
     }
 
-    /*public Map<Long, ProductInfo> getProductInfos() {
-        return productInfos;
-    }
-
-    public void setProductInfos(Map<Long, ProductInfo> productInfos) {
-        this.productInfos = productInfos;
-    }*/
 
     public Date getDate() {
         return date;
@@ -47,5 +40,15 @@ public class OrderDTO {
 
     public void setProducts(List<ProductDTO> products) {
         this.products = products;
+    }
+
+    @Override
+    public String toString() {
+        return "OrderDTO{" +
+                "orderId='" + orderId + '\'' +
+                ", uId='" + uId + '\'' +
+                ", date=" + date +
+                ", products=" + products +
+                '}';
     }
 }

@@ -2,7 +2,12 @@ package order.dto;
 
 import java.net.URL;
 import java.util.Date;
+import java.util.Map;
 
+/**
+ * PRODUCT DTO TO SEND AS RESPONSE IN ORDER DTO
+ * THIS IS WHAT THE CATALOGUE API SHOULD RETURN
+*/
 public class ProductDTO {
 
     private String productId;
@@ -13,6 +18,25 @@ public class ProductDTO {
     private URL pimage;
     private Integer pUnit;
     private Date dateCreated;
+    private String description;
+    private Map<String, String> specs;
+
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Map<String, String> getSpecs() {
+        return specs;
+    }
+
+    public void setSpecs(Map<String, String> specs) {
+        this.specs = specs;
+    }
 
     public Date getDateCreated() {
         return dateCreated;
@@ -76,5 +100,21 @@ public class ProductDTO {
 
     public void setpUnit(Integer pUnit) {
         this.pUnit = pUnit;
+    }
+
+    @Override
+    public String toString() {
+        return "ProductDTO{" +
+                "productId='" + productId + '\'' +
+                ", pName='" + pName + '\'' +
+                ", pPrice=" + pPrice +
+                ", pBrand='" + pBrand + '\'' +
+                ", pCategory='" + pCategory + '\'' +
+                ", pimage=" + pimage +
+                ", pUnit=" + pUnit +
+                ", dateCreated=" + dateCreated +
+                ", description='" + description + '\'' +
+                ", specs=" + specs +
+                '}';
     }
 }

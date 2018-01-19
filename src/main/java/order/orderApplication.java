@@ -9,8 +9,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.http.client.ClientHttpRequestFactory;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.concurrent.Executor;
 
@@ -26,35 +29,28 @@ public class orderApplication {
     @Bean
     public Executor asyncExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(2);
-        executor.setMaxPoolSize(2);
-        executor.setQueueCapacity(500);
+        executor.setCorePoolSize(4);
+        executor.setMaxPoolSize(5);
+        executor.setQueueCapacity(20);
         executor.setThreadNamePrefix("Email Thread-");
         executor.initialize();
         return executor;
     }
 
     @Bean
-    public Mongo mongoSecondary() throws Exception {
-//         + Values.SECONDARY_USERNAME + ":" + Values.SECONDARY_PASSWORD + "@" +
-        return new MongoClient(new MongoClientURI("mongodb://"+ Values.SECONDARY_HOST));
+    public RestTemplate getRestTemplate(){
+        return new RestTemplate(getClientHttpRequestFactory());
     }
 
-    @Bean(autowire = Autowire.BY_NAME, name = "secondaryMongoTemplate")
-    public MongoTemplate secondaryMongoTemplate() throws Exception {
-        return new MongoTemplate(mongoSecondary(), Values.SECONDARY_DB_NAME);
-
-    }
 
     @Bean
-    public Mongo mongoPrimary() throws Exception {
-        return new MongoClient(Values.PRIMARY_HOST, 27017);
+    public ClientHttpRequestFactory getClientHttpRequestFactory() {
+        int timeout = 500;
+        HttpComponentsClientHttpRequestFactory clientHttpRequestFactory =
+                new HttpComponentsClientHttpRequestFactory();
+        clientHttpRequestFactory.setConnectTimeout(timeout);
+        return clientHttpRequestFactory;
     }
 
-    @Bean(autowire = Autowire.BY_NAME, name = "primaryMongoTemplate")
-    @Primary
-    public MongoTemplate primaryMongoTemplate() throws Exception {
-        return new MongoTemplate(mongoPrimary(), Values.PRIMARY_DB_NAME);
 
-    }
 }

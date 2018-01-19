@@ -3,7 +3,7 @@
 //import com.mongodb.BasicDBObject;
 //import com.mongodb.DBObject;
 //import order.dto.OrderDTO;
-//import order.entity.Product;
+//import order.entity.ProductCache;
 //import order.repository.OrderProductJoinRepository;
 //import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.data.mongodb.core.MongoTemplate;
@@ -24,7 +24,7 @@
 //    @Override
 //    public List<OrderDTO> getHistory(int start, int count) {
 //
-//        DBObject operation = new BasicDBObject("$lookup", new BasicDBObject("from", Product.COLLECTION_NAME))
+//        DBObject operation = new BasicDBObject("$lookup", new BasicDBObject("from", ProductCache.COLLECTION_NAME))
 //                .append("localField", "productInfos")
 //                .append("foreignField", "productId")
 //                .append("as", "products");

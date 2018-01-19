@@ -1,22 +1,18 @@
 package order;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.IOException;
 import java.util.Map;
 
 public class RestClient<S> {
 
+    @Autowired
     private RestTemplate rest;
-    private ObjectMapper objectMapper;
+    private ObjectMapper objectMapper = new ObjectMapper();
 
-    public RestClient() {
-        this.rest = new RestTemplate();
-        objectMapper = new ObjectMapper();
-    }
 
     public String get(String uri, Map<String, String> uriVariables) {
         return rest.getForEntity(uri, String.class, uriVariables).getBody();

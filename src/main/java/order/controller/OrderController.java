@@ -1,16 +1,13 @@
 package order.controller;
 
-import com.mongodb.util.JSON;
+import order.Exceptions.CustomException;
 import order.dto.OrderDTO;
 import order.entity.Order;
-import order.services.CartServices;
-import order.services.MailService;
 import order.services.OrderServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RequestMapping("/order")
@@ -21,34 +18,30 @@ public class OrderController {
     OrderServices orderServices;
 
 
-    @Autowired
-    CartServices cartServices;
-
-    @RequestMapping(value = "/add", method = RequestMethod.POST)
-    public ResponseEntity<OrderDTO> add(@RequestBody Order order) {
-
+    @RequestMapping(method = RequestMethod.POST, value = "/add")
+    public ResponseEntity<?> add(@RequestBody Order order) {
+        System.out.println(order);
         OrderDTO orderDTO = null;
         try {
-            //place order : this can throw exception if some product in order is out of stock
+            //place order : this can throw exception if some product in order is out of stock or catalogue api is down
             orderDTO = orderServices.add(order);
-            //remove from cart
-            cartServices.emptyCart(order.getuId());
+            System.out.println("OrderDTO " + orderDTO);
             return new ResponseEntity<>(orderDTO, HttpStatus.OK);
-        } catch (Exception e) {
+        } catch (CustomException e) {
             e.printStackTrace();
             System.out.println("Returning false response");
-            return new ResponseEntity<>(orderDTO, HttpStatus.NOT_ACCEPTABLE);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_ACCEPTABLE);
         }
     }
 
-    @RequestMapping(value = "/{orderId}", method = RequestMethod.GET)
+    @RequestMapping(method = RequestMethod.GET, value = "/{orderId}")
     public ResponseEntity<?> findOne(@PathVariable("orderId") String orderId){
 
         OrderDTO orderDTO = orderServices.findOrderDTOById(orderId);
         return new ResponseEntity<>(orderDTO, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/history/{uid}", method = RequestMethod.GET)
+    @RequestMapping(method = RequestMethod.GET, value = "/history/{uid}")
     public ResponseEntity<List<OrderDTO>> getJoinedRecent(@RequestParam(value = "p", required = false, defaultValue = "0") Integer page,
                                                           @RequestParam(value = "s", required = false, defaultValue = "10") Integer size,
                                                           @PathVariable("uid") String uid){
@@ -58,7 +51,4 @@ public class OrderController {
     }
 
 
-    public ResponseEntity<List<Order>> getRealRecent(){
-        return new ResponseEntity<>(orderServices.findRealRecent(0, 0), HttpStatus.OK);
-    }
 }
