@@ -6,6 +6,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
 import java.util.Map;
+import java.util.StringJoiner;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Document(collection = Order.COLLECTION_NAME)
@@ -50,13 +51,14 @@ public class Order {
         this.date = date;
     }
 
+
     @Override
     public String toString() {
-        return "Order{" +
-                "orderId='" + orderId + '\'' +
-                ", uId='" + uId + '\'' +
-                ", productInfos=" + productInfos +
-                ", date=" + date +
-                '}';
+        return new StringJoiner(", ", this.getClass().getSimpleName() + "[", "]")
+                .add("date = " + date)
+                .add("orderId = " + orderId)
+                .add("productInfos = " + productInfos)
+                .add("uId = " + uId)
+                .toString();
     }
 }

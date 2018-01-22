@@ -20,16 +20,13 @@ public class OrderController {
 
     @RequestMapping(method = RequestMethod.POST, value = "/add")
     public ResponseEntity<?> add(@RequestBody Order order) {
-        System.out.println(order);
         OrderDTO orderDTO = null;
         try {
             //place order : this can throw exception if some product in order is out of stock or catalogue api is down
             orderDTO = orderServices.add(order);
-            System.out.println("OrderDTO " + orderDTO);
             return new ResponseEntity<>(orderDTO, HttpStatus.OK);
         } catch (CustomException e) {
             e.printStackTrace();
-            System.out.println("Returning false response");
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_ACCEPTABLE);
         }
     }

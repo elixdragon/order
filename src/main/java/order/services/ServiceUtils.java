@@ -13,6 +13,7 @@ import org.springframework.web.client.RestClientException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Service
 public class ServiceUtils {
@@ -26,8 +27,8 @@ public class ServiceUtils {
         orderDTO.setProducts(products);
         Map<String, ProductInfo> productInfoMap = order.getProductInfos();
         for (ProductDTO product : products) {
-            product.setpPrice(productInfoMap.get(product.getProductId()).getPrice());
-            product.setpUnit(productInfoMap.get(product.getProductId()).getUnits());
+            product.setProductPrice(productInfoMap.get(product.getProductId()).getPrice());
+            product.setProductUnit(productInfoMap.get(product.getProductId()).getUnits());
         }
         return orderDTO;
     }
@@ -37,13 +38,13 @@ public class ServiceUtils {
         List<OrderDTO> orderDTOList = new ArrayList<>();
 
         orders.forEach(order -> {
-            List<String> productIds = new ArrayList<>(order.getProductInfos().keySet());
+            Set<String> productIds = order.getProductInfos().keySet();
             List<ProductDTO> products = null;
             try {
                 products = productServices.getProductDTOListFromAPI(productIds);
             } catch (RestClientException rce) {
                 System.out.println("Unable to fetch complete information");
-                //TODO : fetch from cache
+                //TODO : fetch from cache : DONE
                 products = productServices.getProductCacheList(productIds);
                 System.out.println(products);
             }

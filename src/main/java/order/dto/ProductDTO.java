@@ -1,41 +1,90 @@
 package order.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.springframework.beans.BeanUtils;
+
+import javax.validation.constraints.NotNull;
 import java.net.URL;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.StringJoiner;
 
 /**
  * PRODUCT DTO TO SEND AS RESPONSE IN ORDER DTO
  * THIS IS WHAT THE CATALOGUE API SHOULD RETURN
 */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ProductDTO {
 
     private String productId;
-    private String pName;
-    private Double pPrice;
-    private String pBrand;
-    private String pCategory;
-    private URL pimage;
-    private Integer pUnit;
+    @NotNull
+    private String productName;
+    private Double productPrice;
+    private String productBrand;
+    private String productCategory;
+    private String productImage;
+    private Integer productUnit;
     private Date dateCreated;
+    private Date dateModified;
     private String description;
-    private Map<String, String> specs;
+    private HashMap<String, String> specifications;
 
 
-    public String getDescription() {
-        return description;
+    public String getProductId() {
+        return productId;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setProductId(String productId) {
+        this.productId = productId;
     }
 
-    public Map<String, String> getSpecs() {
-        return specs;
+    public String getProductName() {
+        return productName;
     }
 
-    public void setSpecs(Map<String, String> specs) {
-        this.specs = specs;
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+
+    public Double getProductPrice() {
+        return productPrice;
+    }
+
+    public void setProductPrice(Double productPrice) {
+        this.productPrice = productPrice;
+    }
+
+    public String getProductBrand() {
+        return productBrand;
+    }
+
+    public void setProductBrand(String productBrand) {
+        this.productBrand = productBrand;
+    }
+
+    public String getProductCategory() {
+        return productCategory;
+    }
+
+    public void setProductCategory(String productCategory) {
+        this.productCategory = productCategory;
+    }
+
+    public String getProductImage() {
+        return productImage;
+    }
+
+    public void setProductImage(String productImage) {
+        this.productImage = productImage;
+    }
+
+    public Integer getProductUnit() {
+        return productUnit;
+    }
+
+    public void setProductUnit(Integer productUnit) {
+        this.productUnit = productUnit;
     }
 
     public Date getDateCreated() {
@@ -46,75 +95,44 @@ public class ProductDTO {
         this.dateCreated = dateCreated;
     }
 
-    public String getProductId() {
-        return productId;
+    public Date getDateModified() {
+        return dateModified;
     }
 
-    public void setProductId(String productId) {
-        this.productId = productId;
+    public void setDateModified(Date dateModified) {
+        this.dateModified = dateModified;
     }
 
-    public String getpName() {
-        return pName;
+    public String getDescription() {
+        return description;
     }
 
-    public void setpName(String pName) {
-        this.pName = pName;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public Double getpPrice() {
-        return pPrice;
+    public HashMap<String, String> getSpecifications() {
+        return specifications;
     }
 
-    public void setpPrice(Double pPrice) {
-        this.pPrice = pPrice;
-    }
-
-    public String getpBrand() {
-        return pBrand;
-    }
-
-    public void setpBrand(String pBrand) {
-        this.pBrand = pBrand;
-    }
-
-    public String getpCategory() {
-        return pCategory;
-    }
-
-    public void setpCategory(String pCategory) {
-        this.pCategory = pCategory;
-    }
-
-    public URL getPimage() {
-        return pimage;
-    }
-
-    public void setPimage(URL pimage) {
-        this.pimage = pimage;
-    }
-
-    public Integer getpUnit() {
-        return pUnit;
-    }
-
-    public void setpUnit(Integer pUnit) {
-        this.pUnit = pUnit;
+    public void setSpecifications(HashMap<String, String> specifications) {
+        this.specifications = specifications;
     }
 
     @Override
     public String toString() {
-        return "ProductDTO{" +
-                "productId='" + productId + '\'' +
-                ", pName='" + pName + '\'' +
-                ", pPrice=" + pPrice +
-                ", pBrand='" + pBrand + '\'' +
-                ", pCategory='" + pCategory + '\'' +
-                ", pimage=" + pimage +
-                ", pUnit=" + pUnit +
-                ", dateCreated=" + dateCreated +
-                ", description='" + description + '\'' +
-                ", specs=" + specs +
-                '}';
+        return new StringJoiner(", ", this.getClass().getSimpleName() + "[", "]")
+                .add("dateCreated = " + dateCreated)
+                .add("dateModified = " + dateModified)
+                .add("description = " + description)
+                .add("productBrand = " + productBrand)
+                .add("productCategory = " + productCategory)
+                .add("productId = " + productId)
+                .add("productImage = " + productImage)
+                .add("productName = " + productName)
+                .add("productPrice = " + productPrice)
+                .add("productUnit = " + productUnit)
+                .add("specifications = " + specifications)
+                .toString();
     }
 }

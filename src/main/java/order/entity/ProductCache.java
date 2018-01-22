@@ -4,8 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.net.URL;
-import java.util.Date;
+import java.util.StringJoiner;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Document
@@ -15,14 +14,10 @@ public class ProductCache {
 
     @Id
     private String productId;
-    private String pName;
-    private String pBrand;
-    private String pCategory;
-    private URL pimage;
-
-    public static String getCollectionName() {
-        return COLLECTION_NAME;
-    }
+    private String productName;
+    private String productBrand;
+    private String productCategory;
+    private String productImage;
 
     public String getProductId() {
         return productId;
@@ -32,46 +27,47 @@ public class ProductCache {
         this.productId = productId;
     }
 
-    public String getpName() {
-        return pName;
+    public String getProductName() {
+        return productName;
     }
 
-    public void setpName(String pName) {
-        this.pName = pName;
+    public void setProductName(String productName) {
+        this.productName = productName;
     }
 
-    public String getpBrand() {
-        return pBrand;
+    public String getProductBrand() {
+        return productBrand;
     }
 
-    public void setpBrand(String pBrand) {
-        this.pBrand = pBrand;
+    public void setProductBrand(String productBrand) {
+        this.productBrand = productBrand;
     }
 
-    public String getpCategory() {
-        return pCategory;
+    public String getProductCategory() {
+        return productCategory;
     }
 
-    public void setpCategory(String pCategory) {
-        this.pCategory = pCategory;
+    public void setProductCategory(String productCategory) {
+        this.productCategory = productCategory;
     }
 
-    public URL getPimage() {
-        return pimage;
+    public String getProductImage() {
+        return productImage;
     }
 
-    public void setPimage(URL pimage) {
-        this.pimage = pimage;
+    public void setProductImage(String productImage) {
+        this.productImage = productImage;
     }
 
     @Override
     public String toString() {
-        return "ProductCache{" +
-                "productId='" + productId + '\'' +
-                ", pName='" + pName + '\'' +
-                ", pBrand='" + pBrand + '\'' +
-                ", pCategory='" + pCategory + '\'' +
-                ", pimage=" + pimage +
-                '}';
+        return new StringJoiner(", ", this.getClass().getSimpleName() + "[", "]")
+                .add("COLLECTION_NAME = " + COLLECTION_NAME)
+                .add("productBrand = " + productBrand)
+                .add("productCategory = " + productCategory)
+                .add("productId = " + productId)
+                .add("productImage = " + productImage)
+                .add("productName = " + productName)
+                .toString();
     }
 }

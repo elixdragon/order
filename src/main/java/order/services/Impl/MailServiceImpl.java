@@ -8,12 +8,17 @@ import order.services.MailService;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestTemplate;
+
 import javax.mail.internet.MimeMessage;
+import javax.xml.ws.Response;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,6 +29,9 @@ public class MailServiceImpl implements MailService {
 
     @Autowired
     private Configuration freemarkerConfig;
+
+    @Autowired
+    private RestTemplate restTemplate;
 
     @Autowired
     private Environment env;
@@ -54,19 +62,25 @@ public class MailServiceImpl implements MailService {
             helper.setSubject("OrderDetails");
 
             sender.send(message);
+
         }
-        catch (Exception e)
+        catch (RestClientException e)
         {
+            System.out.println("UNABLE TO SEND EMAIL");
             e.printStackTrace();
+        }catch(Exception e2){
+
+            e2.printStackTrace();
         }
 
     }
 
-    private String getUserDetails(String userid) throws Exception
+    private String getUserDetails(String userid)
     {
         String url = "http://"+env.getProperty("auth.host")+":"+env.getProperty("auth.port")+"/"+env.getProperty("auth.usercontextpath")+"/getOne?uid="+userid;
-        RestClient<String> restClient = new RestClient<>();
-        return restClient.get(url, new HashMap<>());
+        ResponseEntity<String> responseEntity = restTemplate.getForEntity(url, String.class);
+        System.out.println(responseEntity);
+        return responseEntity.getBody();
     }
 
 }

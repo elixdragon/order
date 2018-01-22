@@ -2,7 +2,7 @@ package order.services.Impl;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import order.Values;
+import order.ApiEndpoints;
 import order.dto.ProductDTO;
 import order.entity.ProductCache;
 import order.repository.ProductRepository;
@@ -10,18 +10,21 @@ import order.services.ProductServices;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Service
 public class ProductServicesImpl implements ProductServices {
 
-    private ObjectMapper mapper = new ObjectMapper();
+    @Autowired
+    private ObjectMapper mapper;
 
     @Autowired
     private RestTemplate restTemplate;
@@ -31,8 +34,8 @@ public class ProductServicesImpl implements ProductServices {
 
 
     @Override
-    public List<ProductDTO> getProductCacheList(List<String> productIdList) {
-        List<ProductCache> productCacheList = productRepository.findAllByProductIdIn(productIdList);
+    public List<ProductDTO> getProductCacheList(Set<String> productIdList) {
+        List<ProductCache> productCacheList = productRepository.findAllByProductIdIn(new ArrayList<>(productIdList));
         //convert List<ProductCache> to List<ProductDTO>
         System.out.println(productCacheList);
         List<ProductDTO> productDTOList = new ArrayList<>();
@@ -45,10 +48,10 @@ public class ProductServicesImpl implements ProductServices {
     }
 
     @Override
-    public List<ProductDTO> getProductDTOListFromAPI(List<String> productIds) {
+    public List<ProductDTO> getProductDTOListFromAPI(Set<String> productIds) {
         List<ProductDTO> products = null;
         //the following line could throw RestClientException
-        ResponseEntity<String> responseEntity = restTemplate.postForEntity(Values.CATALOGUE_API_BASE + Values.CATALOGUE_API_LIST, productIds, String.class);
+        ResponseEntity<String> responseEntity = restTemplate.postForEntity(ApiEndpoints.CATALOGUE_API_BASE + ApiEndpoints.CATALOGUE_API_LIST, productIds, String.class);
         String responseString = responseEntity.getBody();
         try {
             products = mapper.readValue(responseString, new TypeReference<List<ProductDTO>>() {
@@ -64,6 +67,7 @@ public class ProductServicesImpl implements ProductServices {
         productRepository.save(productCacheList);
     }
 
+
     @Override
     public void saveToCacheFromDTOs(List<ProductDTO> productDTOList) {
         List<ProductCache> productCacheList = new ArrayList<>();
@@ -75,5 +79,9 @@ public class ProductServicesImpl implements ProductServices {
         saveToCache(productCacheList);
     }
 
+    @Async
+    public void changeQuantity(Map<String, Integer> unitMap){
+        restTemplate.put(ApiEndpoints.CATALOGUE_API_BASE + ApiEndpoints.CATALOGUE_API_UPDATE, unitMap);
+    }
 
 }

@@ -21,8 +21,10 @@ public class EmailingAspect {
 //        if (orderDTOResponseEntity.getBody().getClass() != OrderDTO.class) {
 //            return;
 //        }
-        System.out.println("Sending Email...");
-        mailService.sendEmail((OrderDTO) orderDTOResponseEntity.getBody());
+        if (orderDTOResponseEntity.getBody() instanceof OrderDTO){
+            mailService.sendEmail((OrderDTO) orderDTOResponseEntity.getBody());
+            System.out.println("Sending Email...");
+        }
     }
 
 }

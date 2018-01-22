@@ -85,13 +85,13 @@
         <#list productlist as x>
         <br/>
         <hr>
-            <p><img src="${x.getPimage()}" alt="productItem" style="width: auto; height: auto; max-width: 100px; max-height:80px" align="right" hspace="20">
-        Brand    : ${x.getpBrand()}<br>
-        Category :${x.getpCategory()}<br/>
-        Product  :${x.getpName()}<br/>
-        Price    :${x.getpPrice()}<br/>
-        Units    : ${x.getpUnit()}<br/></p>
-            <#assign counter = counter + x.getpPrice()>
+            <p><img src="${x.getProductImage()}" alt="productItem" style="width: auto; height: auto; max-width: 100px; max-height:80px" align="right" hspace="20">
+        Brand    : ${x.getProductBrand()}<br>
+        Category :${x.getProductCategory()}<br/>
+        Product  :${x.getProductName()}<br/>
+        Price    :${x.getProductPrice()}<br/>
+        Units    : ${x.getProductUnit()}<br/></p>
+            <#assign counter = counter + x.getProductPrice()>
         </#list>
         <br>
         <p align="right" hspace="20"><b>Total Price : ${counter}</b></p>

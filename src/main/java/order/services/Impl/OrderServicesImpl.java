@@ -1,7 +1,6 @@
 package order.services.Impl;
 
 import order.Exceptions.CustomException;
-import order.Values;
 import order.dto.OrderDTO;
 import order.dto.ProductDTO;
 import order.entity.Order;
@@ -15,8 +14,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import javax.validation.constraints.NotNull;
 import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
@@ -53,10 +54,11 @@ public class OrderServicesImpl implements OrderServices{
         order.getProductInfos().forEach((pid, pinfo) -> {
             unitMap.put(pid, -pinfo.getUnits());
         });
+        System.out.println(unitMap);
 
         try {
             //the following call can throw RestClientException in case of api call timeout
-            List<ProductDTO> productDTOList = productServices.getProductDTOListFromAPI(new ArrayList<>(order.getProductInfos().keySet()));
+            List<ProductDTO> productDTOList = productServices.getProductDTOListFromAPI(order.getProductInfos().keySet());
             System.out.println("product dto list : " + productDTOList);
             if (validateOrder(unitMap, productDTOList)) {
 
@@ -67,7 +69,7 @@ public class OrderServicesImpl implements OrderServices{
                 productServices.saveToCacheFromDTOs(productDTOList);
 
                 //reduce quantity from catalogue
-                restTemplate.put(Values.CATALOGUE_API_BASE + Values.CATALOGUE_API_UPDATE, unitMap);
+                productServices.changeQuantity(unitMap);
 
                 //get latest order for sending as response / for email aspect.
                 Order insertedOrder = orderRepository.findFirstByUIdOrderByDateDesc(order.getuId());//to get the order ID for sending email
@@ -75,12 +77,14 @@ public class OrderServicesImpl implements OrderServices{
                 //remove from cart : call cart api from here (async)
                 cartServices.emptyCart(order.getuId());
 
+                //send a call to search api
+
                 //return latest orderDTO
                 return serviceUtils.makeOrderDTO(insertedOrder, productDTOList);
             } else {
                 throw new CustomException("Product Out of stock");
             }
-        }catch(RuntimeException r){
+        }catch(RestClientException r){
             throw new CustomException("Cant connect to catalogue API");
         }
     }
@@ -93,10 +97,10 @@ public class OrderServicesImpl implements OrderServices{
     /**
      * IF ORDER CONTAINS MORE UNITS THAN STOCK THEN RETURN FALSE ELSE RETURN TRUE
      * */
-    public Boolean validateOrder(Map<String, Integer> unitMap, List<ProductDTO> products){
+    private Boolean validateOrder(@NotNull Map<String, Integer> unitMap,@NotNull List<ProductDTO> products){
         AtomicReference<Boolean> allGood = new AtomicReference<>(true);
         products.forEach(productDTO -> {
-            if (Math.abs(unitMap.get(productDTO.getProductId())) > productDTO.getpUnit()){
+            if (Math.abs(unitMap.get(productDTO.getProductId())) > productDTO.getProductUnit()){
                 allGood.set(false);
             }
         });

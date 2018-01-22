@@ -1,14 +1,9 @@
 package order;
 
-import com.mongodb.Mongo;
-import com.mongodb.MongoClient;
-import com.mongodb.MongoClientURI;
-import org.springframework.beans.factory.annotation.Autowire;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Primary;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -19,10 +14,10 @@ import java.util.concurrent.Executor;
 
 @SpringBootApplication
 @EnableAsync
-public class orderApplication {
+public class OrderApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(order.orderApplication.class, args);
+        SpringApplication.run(order.OrderApplication.class, args);
     }
 
 
@@ -50,6 +45,11 @@ public class orderApplication {
                 new HttpComponentsClientHttpRequestFactory();
         clientHttpRequestFactory.setConnectTimeout(timeout);
         return clientHttpRequestFactory;
+    }
+
+    @Bean
+    public com.fasterxml.jackson.databind.node.ObjectNode getObjectNode(){
+        return JsonNodeFactory.instance.objectNode();
     }
 
 
